@@ -8,92 +8,145 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid()) @db.Uuid
-  email         String   @unique
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique
   passwordHash  String
   fullName      String
   role          String
-  createdAt     DateTime @default(now())
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
   farms         Farm[]
 }
 
 model Farm {
-  id            String   @id @default(uuid()) @db.Uuid
-  userId        String   @db.Uuid
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @db.Uuid
   name          String
   location      String
   totalArea     Float
 
-  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  user          User      @relation(fields: [userId], references: [id])
   plots         Plot[]
   inventories   Inventory[]
 }
 
 model Plot {
-  id            String   @id @default(uuid()) @db.Uuid
-  farmId        String   @db.Uuid
+  id            String    @id @default(uuid()) @db.Uuid
+  farmId        String    @db.Uuid
   name          String
   area          Float
 
-  farm          Farm     @relation(fields: [farmId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  farm          Farm      @relation(fields: [farmId], references: [id])
   cropCycles    CropCycle[]
 }
 
 model Crop {
-  id            String   @id @default(uuid()) @db.Uuid
+  id            String    @id @default(uuid()) @db.Uuid
   name          String
   type          String
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
   cropCycles    CropCycle[]
 }
 
 model CropCycle {
-  id                String   @id @default(uuid()) @db.Uuid
-  plotId            String   @db.Uuid
-  cropId            String   @db.Uuid
+  id                String    @id @default(uuid()) @db.Uuid
+  plotId            String    @db.Uuid
+  cropId            String    @db.Uuid
   name              String
   startDate         DateTime
   expectedEndDate   DateTime
+  actualEndDate     DateTime?
   status            String
+  totalYield        Float?    // Tổng sản lượng thu hoạch được của vụ này
 
-  plot              Plot     @relation(fields: [plotId], references: [id])
-  crop              Crop     @relation(fields: [cropId], references: [id])
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  plot              Plot        @relation(fields: [plotId], references: [id])
+  crop              Crop        @relation(fields: [cropId], references: [id])
   activityLogs      ActivityLog[]
 }
 
 model Material {
-  id            String   @id @default(uuid()) @db.Uuid
+  id            String    @id @default(uuid()) @db.Uuid
   name          String
   unit          String
   defaultPrice  Float
 
-  inventories   Inventory[]
-  activityLogs  ActivityLog[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  inventories       Inventory[]
+  activityMaterials ActivityMaterial[]
 }
 
 model Inventory {
-  id            String   @id @default(uuid()) @db.Uuid
-  farmId        String   @db.Uuid
-  materialId    String   @db.Uuid
+  id            String    @id @default(uuid()) @db.Uuid
+  farmId        String    @db.Uuid
+  materialId    String    @db.Uuid
   quantity      Float
   totalCost     Float
 
-  farm          Farm     @relation(fields: [farmId], references: [id])
-  material      Material @relation(fields: [materialId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  farm          Farm      @relation(fields: [farmId], references: [id])
+  material      Material  @relation(fields: [materialId], references: [id])
 }
 
 model ActivityLog {
-  id            String   @id @default(uuid()) @db.Uuid
-  cropCycleId   String   @db.Uuid
-  materialId    String?  @db.Uuid
-  activityType  String
-  activityDate  DateTime
-  materialUsed  Float
-  cost          Float
-  notes         String?
-  syncStatus    String
+  id              String    @id @default(uuid()) @db.Uuid
+  cropCycleId     String    @db.Uuid
+  activityType    String    // VD: LAM_DAT, TUOI, BON_PHAN, PHUN_THUOC, THU_HOACH...
+  activityDate    DateTime
+  notes           String?
+  syncStatus      String    // VD: PENDING, SYNCED, CONFLICT
 
-  cropCycle     CropCycle @relation(fields: [cropCycleId], references: [id])
-  material      Material? @relation(fields: [materialId], references: [id])
+  // Dành cho loại hình công việc có tính phí (nhân công / thuê máy móc)
+  cost            Float?
+  
+  // Dành riêng cho loại hình THU_HOACH
+  harvestQuantity Float?    // Sản lượng thu được trong lần thu hoạch này
+  revenue         Float?    // Doanh thu ước tính/thực tế của đợt thu hoạch
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  cropCycle       CropCycle          @relation(fields: [cropCycleId], references: [id])
+  materials       ActivityMaterial[]
+}
+
+// Bảng trung gian để 1 hoạt động có thể dùng nhiều loại vật tư (VD: pha 2 loại phân bón)
+model ActivityMaterial {
+  id              String    @id @default(uuid()) @db.Uuid
+  activityLogId   String    @db.Uuid
+  materialId      String    @db.Uuid
+  quantityUsed    Float
+  cost            Float     // Chi phí vật tư (quantityUsed * đơn giá)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  activityLog     ActivityLog @relation(fields: [activityLogId], references: [id])
+  material        Material    @relation(fields: [materialId], references: [id])
 }
