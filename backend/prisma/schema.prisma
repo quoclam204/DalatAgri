@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid()) @db.Uuid
+  email         String   @unique
+  passwordHash  String
+  fullName      String
+  role          String
+  createdAt     DateTime @default(now())
+
+  farms         Farm[]
+}
+
+model Farm {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @db.Uuid
+  name          String
+  location      String
+  totalArea     Float
+
+  user          User     @relation(fields: [userId], references: [id])
+  plots         Plot[]
+  inventories   Inventory[]
+}
+
+model Plot {
+  id            String   @id @default(uuid()) @db.Uuid
+  farmId        String   @db.Uuid
+  name          String
+  area          Float
+
+  farm          Farm     @relation(fields: [farmId], references: [id])
+  cropCycles    CropCycle[]
+}
+
+model Crop {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String
+  type          String
+
+  cropCycles    CropCycle[]
+}
+
+model CropCycle {
+  id                String   @id @default(uuid()) @db.Uuid
+  plotId            String   @db.Uuid
+  cropId            String   @db.Uuid
+  name              String
+  startDate         DateTime
+  expectedEndDate   DateTime
+  status            String
+
+  plot              Plot     @relation(fields: [plotId], references: [id])
+  crop              Crop     @relation(fields: [cropId], references: [id])
+  activityLogs      ActivityLog[]
+}
+
+model Material {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String
+  unit          String
+  defaultPrice  Float
+
+  inventories   Inventory[]
+  activityLogs  ActivityLog[]
+}
+
+model Inventory {
+  id            String   @id @default(uuid()) @db.Uuid
+  farmId        String   @db.Uuid
+  materialId    String   @db.Uuid
+  quantity      Float
+  totalCost     Float
+
+  farm          Farm     @relation(fields: [farmId], references: [id])
+  material      Material @relation(fields: [materialId], references: [id])
+}
+
+model ActivityLog {
+  id            String   @id @default(uuid()) @db.Uuid
+  cropCycleId   String   @db.Uuid
+  materialId    String?  @db.Uuid
+  activityType  String
+  activityDate  DateTime
+  materialUsed  Float
+  cost          Float
+  notes         String?
+  syncStatus    String
+
+  cropCycle     CropCycle @relation(fields: [cropCycleId], references: [id])
+  material      Material? @relation(fields: [materialId], references: [id])
+}
