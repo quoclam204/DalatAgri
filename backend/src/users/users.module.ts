@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { PrismaModule } from '../prisma/prisma.module'; // Import module DB
+import { UsersController } from './users.controller';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-    imports: [PrismaModule], // Khai báo dùng Prisma
+    imports: [PrismaModule],
     controllers: [UsersController],
     providers: [UsersService],
+    exports: [UsersService], // QUAN TRỌNG: Thêm dòng này
 })
 export class UsersModule { }

@@ -303,18 +303,7 @@
 /* MAIN */
 .main {
   flex: 1;
-  padding: 60px 20px;
-}
-
-.main h1 {
-  color: #1f2937;
-  font-size: 36px;
-  margin-bottom: 16px;
-}
-
-.main p {
-  color: #6b7280;
-  font-size: 18px;
+  padding: 0;
 }
 
 /* FOOTER */

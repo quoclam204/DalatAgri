@@ -3,18 +3,22 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  // Inject PrismaService vào để dùng
   constructor(private prisma: PrismaService) { }
 
-  // Hàm lấy danh sách tất cả người dùng
   async findAll() {
-    return this.prisma.user.findMany();
+    // Lấy user nhưng không trả về passwordHash cho an toàn
+    return this.prisma.user.findMany({
+      select: { id: true, email: true, fullName: true, role: true }
+    });
   }
 
-  // Hàm tạo người dùng mới
-  async create(data: { email: string; passwordHash: string; fullName: string; role: string }) {
-    return this.prisma.user.create({
-      data: data,
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
     });
+  }
+
+  async create(data: { email: string; passwordHash: string; fullName: string; role: string }) {
+    return this.prisma.user.create({ data });
   }
 }
