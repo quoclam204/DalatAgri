@@ -1,33 +1,19 @@
-import { useState, useEffect } from 'react'
 import './App.css'
 
+import Header from './components/Header'
+import Footer from './components/Footer'
+
 function App() {
-  const [users, setUsers] = useState([]);
-
-  // Gọi API đến Backend NestJS khi trang web vừa tải xong
-  useEffect(() => {
-    fetch('http://localhost:3000/users')
-      .then(res => res.json())
-      .then(data => {
-        setUsers(data);
-      })
-      .catch(error => console.error("Lỗi khi gọi API:", error));
-  }, []);
-
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Chào mừng đến với DalatAgri 🌿</h1>
-      <p>Danh sách người dùng từ Database:</p>
+    <div className="app">
+      <Header />
 
-      {users.length === 0 ? (
-        <p><i>Chưa có người dùng nào.</i></p>
-      ) : (
-        <ul>
-          {users.map(user => (
-            <li key={user.id}>{user.fullName} - {user.email}</li>
-          ))}
-        </ul>
-      )}
+      <main className="main container">
+        <h1>Chào mừng đến với DalatAgri 🌿</h1>
+        <p>Quản lý nông trại và nhật ký canh tác.</p>
+      </main>
+
+      <Footer />
     </div>
   )
 }
