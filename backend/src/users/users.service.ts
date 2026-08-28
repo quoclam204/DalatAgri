@@ -19,7 +19,6 @@ type AccountInput = {
 
 @Injectable()
 export class UsersService {
-<<<<<<< HEAD
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -52,7 +51,7 @@ export class UsersService {
         email,
         passwordHash,
         fullName: input.fullName.trim(),
-        role: input.role || 'FARMER',
+        role: input.role || 'OWNER',
       },
     });
 
@@ -68,6 +67,18 @@ export class UsersService {
     }
 
     return this.createSession(user);
+  }
+
+  findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email: email.trim().toLowerCase() },
+    });
+  }
+
+  create(data: { email: string; passwordHash: string; fullName: string; role: string }) {
+    return this.prisma.user.create({
+      data: { ...data, role: data.role as any },
+    });
   }
 
   private async hashPassword(password: string) {
@@ -101,24 +112,5 @@ export class UsersService {
         role: user.role,
       },
     };
-=======
-  constructor(private prisma: PrismaService) { }
-
-  async findAll() {
-    // Lấy user nhưng không trả về passwordHash cho an toàn
-    return this.prisma.user.findMany({
-      select: { id: true, email: true, fullName: true, role: true }
-    });
-  }
-
-  async findByEmail(email: string) {
-    return this.prisma.user.findUnique({
-      where: { email },
-    });
-  }
-
-  async create(data: { email: string; passwordHash: string; fullName: string; role: string }) {
-    return this.prisma.user.create({ data });
->>>>>>> origin/main
   }
 }

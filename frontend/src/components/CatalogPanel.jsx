@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 const API_URL = "http://localhost:3000";
+const emptyCycle = { cropId: "", name: "", description: "", stages: [{ name: "", durationDays: "" }] };
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
@@ -8,447 +9,90 @@ async function request(path, options = {}) {
     ...options,
   });
   const data = await response.json().catch(() => null);
-  if (!response.ok) {
-    const message = Array.isArray(data?.message)
-      ? data.message.join(", ")
-      : data?.message || "Không thể kết nối máy chủ";
-    throw new Error(message);
-  }
+  if (!response.ok) throw new Error(Array.isArray(data?.message) ? data.message.join(", ") : data?.message || "Không thể kết nối máy chủ");
   return data;
 }
 
 function CatalogPanel({ user, initialTab = "crops" }) {
   const [tab, setTab] = useState(initialTab);
-  const [crops, setCrops] = useState([]);
-  const [farms, setFarms] = useState([]);
-  const [plots, setPlots] = useState([]);
-  const [seasons, setSeasons] = useState([]);
+  const [data, setData] = useState({ crops: [], farms: [], plots: [], seasons: [], cycles: [] });
+  const [editing, setEditing] = useState(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [cropForm, setCropForm] = useState({ name: "", type: "" });
-  const [farmForm, setFarmForm] = useState({
-    name: "",
-    location: "",
-    totalArea: "",
-  });
+  const [farmForm, setFarmForm] = useState({ name: "", location: "", totalArea: "" });
   const [plotForm, setPlotForm] = useState({ farmId: "", name: "", area: "" });
-  const [seasonForm, setSeasonForm] = useState({
-    plotId: "",
-    cropId: "",
-    name: "",
-    startDate: "",
-    expectedEndDate: "",
-  });
+  const [seasonForm, setSeasonForm] = useState({ plotId: "", cropId: "", growthCycleId: "", name: "", startDate: "", expectedEndDate: "" });
+  const [cycleForm, setCycleForm] = useState(emptyCycle);
 
   const loadData = async () => {
     try {
       setError("");
-      const [cropData, farmData, plotData, seasonData] = await Promise.all([
-        request("/catalog/crops"),
-        request("/catalog/farms"),
-        request("/catalog/plots"),
-        request("/catalog/seasons"),
+      const [crops, farms, plots, seasons, cycles] = await Promise.all([
+        request("/catalog/crops"), request("/catalog/farms"), request("/catalog/plots"),
+        request("/catalog/seasons"), request("/catalog/growth-cycles"),
       ]);
-      setCrops(cropData);
-      setFarms(farmData);
-      setPlots(plotData);
-      setSeasons(seasonData);
-      setPlotForm((current) => ({
-        ...current,
-        farmId: current.farmId || farmData[0]?.id || "",
-      }));
-      setSeasonForm((current) => ({
-        ...current,
-        plotId: current.plotId || plotData[0]?.id || "",
-        cropId: current.cropId || cropData[0]?.id || "",
-      }));
-    } catch (loadError) {
-      setError(loadError.message);
-    }
+      setData({ crops, farms, plots, seasons, cycles });
+      setPlotForm((current) => ({ ...current, farmId: current.farmId || farms[0]?.id || "" }));
+      setSeasonForm((current) => ({ ...current, plotId: current.plotId || plots[0]?.id || "", cropId: current.cropId || crops[0]?.id || "" }));
+      setCycleForm((current) => ({ ...current, cropId: current.cropId || crops[0]?.id || "" }));
+    } catch (loadError) { setError(loadError.message); }
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
-  const submit = async (event, path, body, reset) => {
+  const save = async (event, path, body, reset, method = "POST") => {
     event.preventDefault();
     try {
       setError("");
-      await request(path, { method: "POST", body: JSON.stringify(body) });
-      reset();
-      setMessage("Đã lưu dữ liệu vào PostgreSQL");
-      await loadData();
-    } catch (submitError) {
-      setMessage("");
-      setError(submitError.message);
-    }
+      await request(path, { method, body: JSON.stringify(body) });
+      reset(); setEditing(null); setMessage("Đã lưu dữ liệu"); await loadData();
+    } catch (saveError) { setError(saveError.message); }
   };
 
-  const deleteCrop = async (id) => {
-    if (!window.confirm("Xóa cây trồng này?")) return;
-    try {
-      await request(`/catalog/crops/${id}`, { method: "DELETE" });
-      setMessage("Đã ngừng sử dụng cây trồng");
-      await loadData();
-    } catch (deleteError) {
-      setError(deleteError.message);
-    }
+  const remove = async (path, label) => {
+    if (!window.confirm(`Xóa ${label} này?`)) return;
+    try { await request(path, { method: "DELETE" }); setMessage(`Đã xóa ${label}`); await loadData(); }
+    catch (removeError) { setError(removeError.message); }
   };
+
+  const edit = (type, item) => {
+    setEditing({ type, id: item.id });
+    if (type === "crop") setCropForm({ name: item.name, type: item.type });
+    if (type === "farm") setFarmForm({ name: item.name, location: item.location, totalArea: item.totalArea });
+    if (type === "plot") setPlotForm({ farmId: item.farmId, name: item.name, area: item.area });
+    if (type === "season") setSeasonForm({ plotId: item.plotId, cropId: item.cropId, growthCycleId: item.growthCycleId || "", name: item.name, startDate: item.startDate?.slice(0, 10) || "", expectedEndDate: item.expectedEndDate?.slice(0, 10) || "" });
+  };
+
+  const cancelEdit = () => { setEditing(null); setCropForm({ name: "", type: "" }); setFarmForm({ name: "", location: "", totalArea: "" }); setPlotForm({ farmId: data.farms[0]?.id || "", name: "", area: "" }); setSeasonForm({ plotId: data.plots[0]?.id || "", cropId: data.crops[0]?.id || "", growthCycleId: "", name: "", startDate: "", expectedEndDate: "" }); };
+  const tabs = [["crops", "Cây trồng", data.crops.length], ["farms", "Vườn", data.farms.length], ["plots", "Lô trồng", data.plots.length], ["seasons", "Mùa vụ", data.seasons.length], ["cycles", "Chu kỳ", data.cycles.length]];
+  const formProps = (type, collection, path, body, reset) => ({
+    method: editing?.type === type ? "PATCH" : "POST",
+    path: editing?.type === type ? `${path}/${editing.id}` : path,
+    body, reset,
+  });
 
   return (
     <section className="panel catalog-panel">
-      <div className="panel-heading">
-        <div>
-          <p className="eyebrow">04 / DANH MỤC</p>
-          <h2>Dữ liệu nền sản xuất</h2>
-        </div>
-        <button className="sync-button" type="button" onClick={loadData}>
-          Làm mới
-        </button>
-      </div>
-      <div className="catalog-tabs">
-        {[
-          ["crops", "Cây trồng"],
-          ["farms", "Vườn"],
-          ["plots", "Lô trồng"],
-          ["seasons", "Mùa vụ"],
-        ].map(([value, label]) => (
-          <button
-            className={tab === value ? "active" : ""}
-            key={value}
-            type="button"
-            onClick={() => setTab(value)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {error && <p className="catalog-message error">{error}</p>}
-      {message && <p className="catalog-message success">{message}</p>}
+      <div className="panel-heading"><div><p className="eyebrow">04 / DANH MỤC</p><h2>Dữ liệu nền sản xuất</h2><p className="catalog-subtitle">Thiết lập một lần, dùng xuyên suốt mùa vụ.</p></div><button className="sync-button" type="button" onClick={loadData}>Làm mới</button></div>
+      <div className="catalog-tabs" role="tablist">{tabs.map(([value, label, count]) => <button role="tab" aria-selected={tab === value} className={tab === value ? "active" : ""} key={value} type="button" onClick={() => { setTab(value); cancelEdit(); }}>{label}<span>{count}</span></button>)}</div>
+      {error && <p className="catalog-message error">{error}</p>}{message && <p className="catalog-message success">{message}</p>}
 
-      {tab === "crops" && (
-        <div className="catalog-layout">
-          <form
-            className="catalog-form"
-            onSubmit={(event) =>
-              submit(event, "/catalog/crops", cropForm, () =>
-                setCropForm({ name: "", type: "" }),
-              )
-            }
-          >
-            <h3>Thêm cây trồng</h3>
-            <label>
-              Tên cây
-              <input
-                required
-                value={cropForm.name}
-                onChange={(event) =>
-                  setCropForm({ ...cropForm, name: event.target.value })
-                }
-                placeholder="Cà phê"
-              />
-            </label>
-            <label>
-              Nhóm cây
-              <input
-                required
-                value={cropForm.type}
-                onChange={(event) =>
-                  setCropForm({ ...cropForm, type: event.target.value })
-                }
-                placeholder="Cây công nghiệp"
-              />
-            </label>
-            <button className="primary-button" type="submit">
-              Lưu cây trồng
-            </button>
-          </form>
-          <div className="catalog-list">
-            <h3>{crops.length} cây trồng trong hệ thống</h3>
-            {crops.length === 0 ? (
-              <p className="empty-state">Chưa có cây trồng.</p>
-            ) : (
-              crops.map((crop) => (
-                <div className="catalog-row" key={crop.id}>
-                  <div>
-                    <strong>{crop.name}</strong>
-                    <small>{crop.type}</small>
-                  </div>
-                  <button
-                    className="text-button"
-                    type="button"
-                    onClick={() => deleteCrop(crop.id)}
-                  >
-                    Xóa
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
+      {tab === "crops" && <div className="catalog-layout"><form className="catalog-form" onSubmit={(event) => { const f = formProps("crop", data.crops, "/catalog/crops", cropForm, () => setCropForm({ name: "", type: "" })); save(event, f.path, f.body, f.reset, f.method); }}><h3>{editing?.type === "crop" ? "Chỉnh sửa cây trồng" : "Thêm cây trồng"}</h3><label>Tên cây<input required value={cropForm.name} onChange={(e) => setCropForm({ ...cropForm, name: e.target.value })} placeholder="Cà phê" /></label><label>Nhóm cây<input required value={cropForm.type} onChange={(e) => setCropForm({ ...cropForm, type: e.target.value })} placeholder="Cây công nghiệp" /></label><Actions editing={editing?.type === "crop"} label="cây trồng" onCancel={cancelEdit} /></form><List title={`${data.crops.length} cây trồng`} empty="Chưa có cây trồng." items={data.crops} render={(item) => <><div><strong>{item.name}</strong><small>{item.type}</small></div><ItemActions onEdit={() => edit("crop", item)} onDelete={() => remove(`/catalog/crops/${item.id}`, "cây trồng")} /></>} /></div>}
 
-      {tab === "farms" && (
-        <div className="catalog-layout">
-          <form
-            className="catalog-form"
-            onSubmit={(event) =>
-              submit(
-                event,
-                "/catalog/farms",
-                { ...farmForm, userId: user?.id },
-                () => setFarmForm({ name: "", location: "", totalArea: "" }),
-              )
-            }
-          >
-            <h3>Thêm vườn</h3>
-            {!user && (
-              <p className="catalog-message error">
-                Đăng nhập trước khi tạo vườn.
-              </p>
-            )}
-            <label>
-              Tên vườn
-              <input
-                required
-                value={farmForm.name}
-                onChange={(event) =>
-                  setFarmForm({ ...farmForm, name: event.target.value })
-                }
-              />
-            </label>
-            <label>
-              Địa điểm
-              <input
-                required
-                value={farmForm.location}
-                onChange={(event) =>
-                  setFarmForm({ ...farmForm, location: event.target.value })
-                }
-              />
-            </label>
-            <label>
-              Diện tích (ha)
-              <input
-                required
-                min="0.01"
-                step="0.01"
-                type="number"
-                value={farmForm.totalArea}
-                onChange={(event) =>
-                  setFarmForm({ ...farmForm, totalArea: event.target.value })
-                }
-              />
-            </label>
-            <button className="primary-button" disabled={!user} type="submit">
-              Lưu vườn
-            </button>
-          </form>
-          <div className="catalog-list">
-            <h3>{farms.length} vườn</h3>
-            {farms.map((farm) => (
-              <div className="catalog-row" key={farm.id}>
-                <div>
-                  <strong>{farm.name}</strong>
-                  <small>
-                    {farm.location} · {farm.totalArea} ha
-                  </small>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {tab === "farms" && <div className="catalog-layout"><form className="catalog-form" onSubmit={(event) => { const f = formProps("farm", data.farms, "/catalog/farms", { ...farmForm, userId: user?.id }, () => setFarmForm({ name: "", location: "", totalArea: "" })); save(event, f.path, f.body, f.reset, f.method); }}><h3>{editing?.type === "farm" ? "Chỉnh sửa vườn" : "Thêm vườn"}</h3>{!user && <p className="catalog-message error">Đăng nhập trước khi tạo vườn.</p>}<label>Tên vườn<input required value={farmForm.name} onChange={(e) => setFarmForm({ ...farmForm, name: e.target.value })} placeholder="Vườn Đồi Thông" /></label><label>Địa điểm<input required value={farmForm.location} onChange={(e) => setFarmForm({ ...farmForm, location: e.target.value })} placeholder="Đà Lạt" /></label><label>Diện tích (ha)<input required min="0.01" step="0.01" type="number" value={farmForm.totalArea} onChange={(e) => setFarmForm({ ...farmForm, totalArea: e.target.value })} /></label><Actions editing={editing?.type === "farm"} label="vườn" onCancel={cancelEdit} disabled={!user} /></form><List title={`${data.farms.length} vườn`} items={data.farms} render={(item) => <><div><strong>{item.name}</strong><small>{item.location} · {item.totalArea} ha · {item.plots?.length || 0} lô</small></div><ItemActions onEdit={() => edit("farm", item)} onDelete={() => remove(`/catalog/farms/${item.id}`, "vườn")} /></>} /></div>}
 
-      {tab === "plots" && (
-        <div className="catalog-layout">
-          <form
-            className="catalog-form"
-            onSubmit={(event) =>
-              submit(event, "/catalog/plots", plotForm, () =>
-                setPlotForm({ ...plotForm, name: "", area: "" }),
-              )
-            }
-          >
-            <h3>Thêm lô trồng</h3>
-            <label>
-              Vườn
-              <select
-                required
-                value={plotForm.farmId}
-                onChange={(event) =>
-                  setPlotForm({ ...plotForm, farmId: event.target.value })
-                }
-              >
-                {farms.map((farm) => (
-                  <option key={farm.id} value={farm.id}>
-                    {farm.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Tên lô
-              <input
-                required
-                value={plotForm.name}
-                onChange={(event) =>
-                  setPlotForm({ ...plotForm, name: event.target.value })
-                }
-              />
-            </label>
-            <label>
-              Diện tích (ha)
-              <input
-                required
-                min="0.01"
-                step="0.01"
-                type="number"
-                value={plotForm.area}
-                onChange={(event) =>
-                  setPlotForm({ ...plotForm, area: event.target.value })
-                }
-              />
-            </label>
-            <button
-              className="primary-button"
-              disabled={!farms.length}
-              type="submit"
-            >
-              Lưu lô
-            </button>
-          </form>
-          <div className="catalog-list">
-            <h3>{plots.length} lô trồng</h3>
-            {plots.map((plot) => (
-              <div className="catalog-row" key={plot.id}>
-                <div>
-                  <strong>{plot.name}</strong>
-                  <small>
-                    {plot.farm?.name} · {plot.area} ha
-                  </small>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {tab === "plots" && <div className="catalog-layout"><form className="catalog-form" onSubmit={(event) => { const f = formProps("plot", data.plots, "/catalog/plots", plotForm, () => setPlotForm({ ...plotForm, name: "", area: "" })); save(event, f.path, f.body, f.reset, f.method); }}><h3>{editing?.type === "plot" ? "Chỉnh sửa lô trồng" : "Thêm lô trồng"}</h3><label>Thuộc vườn<select required value={plotForm.farmId} onChange={(e) => setPlotForm({ ...plotForm, farmId: e.target.value })}>{data.farms.map((farm) => <option key={farm.id} value={farm.id}>{farm.name}</option>)}</select></label><label>Tên lô<input required value={plotForm.name} onChange={(e) => setPlotForm({ ...plotForm, name: e.target.value })} placeholder="Lô A1" /></label><label>Diện tích (ha)<input required min="0.01" step="0.01" type="number" value={plotForm.area} onChange={(e) => setPlotForm({ ...plotForm, area: e.target.value })} /></label><Actions editing={editing?.type === "plot"} label="lô trồng" onCancel={cancelEdit} disabled={!data.farms.length} /></form><List title={`${data.plots.length} lô trồng`} items={data.plots} render={(item) => <><div><strong>{item.name}</strong><small>{item.farm?.name} · {item.area} ha</small></div><ItemActions onEdit={() => edit("plot", item)} onDelete={() => remove(`/catalog/plots/${item.id}`, "lô trồng")} /></>} /></div>}
 
-      {tab === "seasons" && (
-        <div className="catalog-layout">
-          <form
-            className="catalog-form"
-            onSubmit={(event) =>
-              submit(event, "/catalog/seasons", seasonForm, () =>
-                setSeasonForm({
-                  ...seasonForm,
-                  name: "",
-                  startDate: "",
-                  expectedEndDate: "",
-                }),
-              )
-            }
-          >
-            <h3>Thêm mùa vụ</h3>
-            <label>
-              Lô trồng
-              <select
-                required
-                value={seasonForm.plotId}
-                onChange={(event) =>
-                  setSeasonForm({ ...seasonForm, plotId: event.target.value })
-                }
-              >
-                {plots.map((plot) => (
-                  <option key={plot.id} value={plot.id}>
-                    {plot.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Cây trồng
-              <select
-                required
-                value={seasonForm.cropId}
-                onChange={(event) =>
-                  setSeasonForm({ ...seasonForm, cropId: event.target.value })
-                }
-              >
-                {crops.map((crop) => (
-                  <option key={crop.id} value={crop.id}>
-                    {crop.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Tên mùa vụ
-              <input
-                required
-                value={seasonForm.name}
-                onChange={(event) =>
-                  setSeasonForm({ ...seasonForm, name: event.target.value })
-                }
-                placeholder="Mùa cà phê 2026"
-              />
-            </label>
-            <div className="date-grid">
-              <label>
-                Bắt đầu
-                <input
-                  required
-                  type="date"
-                  value={seasonForm.startDate}
-                  onChange={(event) =>
-                    setSeasonForm({
-                      ...seasonForm,
-                      startDate: event.target.value,
-                    })
-                  }
-                />
-              </label>
-              <label>
-                Kết thúc
-                <input
-                  required
-                  type="date"
-                  value={seasonForm.expectedEndDate}
-                  onChange={(event) =>
-                    setSeasonForm({
-                      ...seasonForm,
-                      expectedEndDate: event.target.value,
-                    })
-                  }
-                />
-              </label>
-            </div>
-            <button
-              className="primary-button"
-              disabled={!plots.length || !crops.length}
-              type="submit"
-            >
-              Lưu mùa vụ
-            </button>
-          </form>
-          <div className="catalog-list">
-            <h3>{seasons.length} mùa vụ</h3>
-            {seasons.map((season) => (
-              <div className="catalog-row" key={season.id}>
-                <div>
-                  <strong>{season.name}</strong>
-                  <small>
-                    {season.crop?.name} · {season.plot?.name} · {season.status}
-                  </small>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {tab === "seasons" && <div className="catalog-layout"><form className="catalog-form" onSubmit={(event) => { const f = formProps("season", data.seasons, "/catalog/seasons", seasonForm, () => setSeasonForm({ ...seasonForm, name: "", startDate: "", expectedEndDate: "" })); save(event, f.path, f.body, f.reset, f.method); }}><h3>{editing?.type === "season" ? "Chỉnh sửa mùa vụ" : "Lập mùa vụ"}</h3><label>Lô trồng<select required value={seasonForm.plotId} onChange={(e) => setSeasonForm({ ...seasonForm, plotId: e.target.value })}>{data.plots.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Cây trồng<select required value={seasonForm.cropId} onChange={(e) => setSeasonForm({ ...seasonForm, cropId: e.target.value })}>{data.crops.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Chu kỳ áp dụng<select value={seasonForm.growthCycleId} onChange={(e) => setSeasonForm({ ...seasonForm, growthCycleId: e.target.value })}><option value="">Không áp dụng</option>{data.cycles.filter((item) => !seasonForm.cropId || item.cropId === seasonForm.cropId).map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Tên mùa vụ<input required value={seasonForm.name} onChange={(e) => setSeasonForm({ ...seasonForm, name: e.target.value })} placeholder="Mùa cà phê 2026" /></label><div className="date-grid"><label>Bắt đầu<input required type="date" value={seasonForm.startDate} onChange={(e) => setSeasonForm({ ...seasonForm, startDate: e.target.value })} /></label><label>Dự kiến kết thúc<input required type="date" value={seasonForm.expectedEndDate} onChange={(e) => setSeasonForm({ ...seasonForm, expectedEndDate: e.target.value })} /></label></div><Actions editing={editing?.type === "season"} label="mùa vụ" onCancel={cancelEdit} disabled={!data.plots.length || !data.crops.length} /></form><List title={`${data.seasons.length} mùa vụ`} items={data.seasons} render={(item) => <><div><strong>{item.name}</strong><small>{item.crop?.name} · {item.plot?.name} · {item.status}</small></div><ItemActions onEdit={() => edit("season", item)} onDelete={() => remove(`/catalog/seasons/${item.id}`, "mùa vụ")} /></>} /></div>}
+
+      {tab === "cycles" && <div className="catalog-layout"><form className="catalog-form" onSubmit={(event) => save(event, "/catalog/growth-cycles", { cropId: cycleForm.cropId, name: cycleForm.name, description: cycleForm.description, stages: cycleForm.stages }, () => setCycleForm(emptyCycle))}><h3>Thiết lập chu kỳ</h3><p className="form-hint">Một chu kỳ gồm các giai đoạn chăm sóc theo thứ tự.</p><label>Cây trồng<select required value={cycleForm.cropId} onChange={(e) => setCycleForm({ ...cycleForm, cropId: e.target.value })}>{data.crops.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>Tên chu kỳ<input required value={cycleForm.name} onChange={(e) => setCycleForm({ ...cycleForm, name: e.target.value })} placeholder="Chu kỳ cà phê cơ bản" /></label>{cycleForm.stages.map((stage, index) => <div className="stage-row" key={index}><label>Giai đoạn {index + 1}<input required value={stage.name} onChange={(e) => { const stages = [...cycleForm.stages]; stages[index] = { ...stage, name: e.target.value }; setCycleForm({ ...cycleForm, stages }); }} placeholder="Sinh trưởng thân lá" /></label><label>Số ngày<input required min="1" type="number" value={stage.durationDays} onChange={(e) => { const stages = [...cycleForm.stages]; stages[index] = { ...stage, durationDays: e.target.value }; setCycleForm({ ...cycleForm, stages }); }} /></label></div>)}<button className="secondary-button" type="button" onClick={() => setCycleForm({ ...cycleForm, stages: [...cycleForm.stages, { name: "", durationDays: "" }] })}>+ Thêm giai đoạn</button><Actions label="chu kỳ" onCancel={() => setCycleForm(emptyCycle)} disabled={!data.crops.length} /></form><List title={`${data.cycles.length} chu kỳ sinh trưởng`} empty="Chưa có chu kỳ." items={data.cycles} render={(item) => <><div><strong>{item.name}</strong><small>{item.crop?.name} · {item.stages?.length || 0} giai đoạn</small></div><span className="catalog-status">{(item.stages || []).reduce((sum, stage) => sum + stage.durationDays, 0)} ngày</span></>} /></div>}
     </section>
   );
 }
+
+function Actions({ editing, label, onCancel, disabled }) { return <div className="form-actions"><button className="primary-button" disabled={disabled} type="submit">{editing ? `Cập nhật ${label}` : `Lưu ${label}`}</button>{editing && <button className="secondary-button" type="button" onClick={onCancel}>Hủy chỉnh sửa</button>}</div>; }
+function ItemActions({ onEdit, onDelete }) { return <div className="catalog-actions"><button className="text-button" type="button" onClick={onEdit}>Sửa</button><button className="text-button danger" type="button" onClick={onDelete}>Xóa</button></div>; }
+function List({ title, empty = "Chưa có dữ liệu.", items, render }) { return <div className="catalog-list"><h3>{title}</h3>{items.length === 0 ? <p className="empty-state">{empty}</p> : items.map((item) => <div className="catalog-row" key={item.id}>{render(item)}</div>)}</div>; }
 
 export default CatalogPanel;

@@ -901,6 +901,12 @@
   margin-bottom: 16px;
 }
 
+.catalog-subtitle {
+  color: #718078 !important;
+  font-size: 13px !important;
+  margin: 6px 0 0 !important;
+}
+
 .catalog-tabs {
   display: flex;
   gap: 8px;
@@ -946,6 +952,13 @@
   margin-bottom: 2px;
 }
 
+.form-hint {
+  color: #718078 !important;
+  font-size: 13px !important;
+  line-height: 1.5;
+  margin: -4px 0 2px !important;
+}
+
 .catalog-form label {
   display: flex;
   flex-direction: column;
@@ -981,6 +994,20 @@
   padding: 10px 0;
 }
 
+.catalog-actions,
+.form-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stage-row {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) 110px;
+}
+
 .catalog-row > div {
   display: flex;
   flex-direction: column;
@@ -997,9 +1024,29 @@
   font-size: 12px;
 }
 
+.catalog-status {
+  color: #1e804d;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .text-button {
   color: #a13d32;
   padding: 6px 9px;
+}
+
+.text-button.danger {
+  color: #a13d32;
+}
+
+.secondary-button {
+  background: #f2f6f3;
+  border: 1px solid #d7e2db;
+  color: #40564a;
+  cursor: pointer;
+  font: inherit;
+  padding: 10px 12px;
 }
 
 .catalog-message {
@@ -1028,6 +1075,10 @@
   }
 
   .date-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-row {
     grid-template-columns: 1fr;
   }
 }
