@@ -927,7 +927,10 @@
   gap: 7px;
   justify-content: center;
   min-height: 42px;
-  transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .catalog-tabs button span {
@@ -1100,6 +1103,38 @@
 
 .catalog-message.success {
   color: #1e804d !important;
+}
+
+.catalog-toast {
+  align-items: center;
+  border: 1px solid;
+  display: flex;
+  font-size: 13px !important;
+  justify-content: space-between;
+  margin: 0 0 18px !important;
+  padding: 11px 13px;
+}
+
+.catalog-toast.error {
+  background: #fff5f3;
+  border-color: #f0c8c2;
+  color: #a13d32 !important;
+}
+
+.catalog-toast.success {
+  background: #effaf2;
+  border-color: #b9dfc4;
+  color: #17683d !important;
+}
+
+.catalog-toast button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 0 0 16px;
 }
 
 .date-grid {

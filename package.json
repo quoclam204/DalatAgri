@@ -4,8 +4,5 @@
   "scripts": {
     "dev": "npm --prefix frontend run dev",
     "dev:backend": "npm --prefix backend run start:dev"
-  },
-  "dependencies": {
-    "recharts": "^3.10.1"
   }
 }
