@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+<<<<<<< HEAD
 import { PrismaModule } from '../prisma/prisma.module'; // Import module DB
 import { JwtModule } from '@nestjs/jwt';
 
@@ -12,7 +12,15 @@ import { JwtModule } from '@nestjs/jwt';
             signOptions: { expiresIn: '1d' },
         }),
     ],
+=======
+import { UsersController } from './users.controller';
+import { PrismaModule } from '../prisma/prisma.module';
+
+@Module({
+    imports: [PrismaModule],
+>>>>>>> origin/main
     controllers: [UsersController],
     providers: [UsersService],
+    exports: [UsersService], // QUAN TRỌNG: Thêm dòng này
 })
 export class UsersModule { }
