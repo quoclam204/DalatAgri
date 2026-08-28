@@ -24,7 +24,7 @@ export class AuthService {
             email: data.email,
             passwordHash: hashedPassword,
             fullName: data.fullName,
-            role: data.role || 'FARMER',
+            role: data.role || 'OWNER',
         });
 
         // 4. Sinh JWT Token
