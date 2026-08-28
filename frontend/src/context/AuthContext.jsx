@@ -1,35 +1,42 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-    const [token, setToken] = useState(() => localStorage.getItem('access_token'));
-    const [user, setUser] = useState(() => {
-        const u = localStorage.getItem('user');
-        return u ? JSON.parse(u) : null;
-    });
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
-    const login = (accessToken, userData) => {
-        setToken(accessToken);
-        setUser(userData);
-        localStorage.setItem('access_token', accessToken);
-        localStorage.setItem('user', JSON.stringify(userData));
-    };
+  // TODO 1: Khi app load lần đầu, đọc token và user từ localStorage
+  //         Gợi ý: dùng useEffect + JSON.parse(localStorage.getItem('user'))
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('token');
+    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedToken) setToken(storedToken);
+  }, []);
 
-    const logout = () => {
-        setToken(null);
-        setUser(null);
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user');
-    };
+  const login = (newToken, userData) => {
+    // TODO 2: Lưu newToken và userData vào state
+    //         Đồng thời lưu vào localStorage để giữ đăng nhập khi refresh
+    setUser(userData);
+    setToken(newToken);
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', newToken);
+  };
 
-    return (
-        <AuthContext.Provider value={{ token, user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const logout = () => {
+    // TODO 3: Xóa state và xóa localStorage
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, token, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-export function useAuth() {
-    return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);
