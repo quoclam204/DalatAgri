@@ -20,7 +20,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CatalogPanel from "./components/CatalogPanel";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -568,6 +568,29 @@ function DashboardPage() {
   );
 }
 
+function CropsPage() {
+  const { user } = useAuth();
+
+  return (
+    <div className="app">
+      <Header />
+      <main className="main container">
+        <section className="page-intro">
+          <div>
+            <p className="eyebrow">DANH MỤC SẢN XUẤT</p>
+            <h1>Quản lý cây trồng</h1>
+            <p className="intro-copy">
+              Thêm, theo dõi và cập nhật các loại cây đang được canh tác.
+            </p>
+          </div>
+        </section>
+        <CatalogPanel user={user} initialTab="crops" />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -585,6 +608,7 @@ function App() {
           />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/crops" element={<CropsPage />} />
           <Route
             path="/dashboard"
             element={
