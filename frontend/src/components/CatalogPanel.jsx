@@ -17,8 +17,8 @@ async function request(path, options = {}) {
   return data;
 }
 
-function CatalogPanel({ user }) {
-  const [tab, setTab] = useState("crops");
+function CatalogPanel({ user, initialTab = "crops" }) {
+  const [tab, setTab] = useState(initialTab);
   const [crops, setCrops] = useState([]);
   const [farms, setFarms] = useState([]);
   const [plots, setPlots] = useState([]);
