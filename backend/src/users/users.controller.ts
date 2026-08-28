@@ -1,20 +1,22 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 
-@Controller('users') // Đường dẫn API sẽ là: http://localhost:3000/users
+@Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
+    constructor(private readonly usersService: UsersService) {}
 
-    // Xử lý request GET /users
     @Get()
     getAllUsers() {
         return this.usersService.findAll();
     }
 
-    // Xử lý request POST /users
     @Post()
-    createUser(@Body() body: any) {
-        // Lấy dữ liệu Frontend gửi lên (body) và truyền cho Service
-        return this.usersService.create(body);
+    register(@Body() body: { email: string; password: string; fullName: string; role?: string }) {
+        return this.usersService.register(body);
+    }
+
+    @Post('login')
+    login(@Body() body: { email: string; password: string }) {
+        return this.usersService.login(body.email, body.password);
     }
 }
