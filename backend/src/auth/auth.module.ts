@@ -1,19 +1,22 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module'; // Import UsersModule
+import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-    UsersModule, // Cần UsersModule để lấy UsersService
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    UsersModule,
     JwtModule.register({
-      secret: 'MY_SECRET_KEY', // Nên dùng biến môi trường (chúng ta sẽ sửa sau)
-      signOptions: { expiresIn: '1h' },
-    })
+      secret: process.env.JWT_SECRET || 'change-this-development-secret',
+      signOptions: { expiresIn: '1d' },
+    }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy], // Đăng ký JwtStrategy vào providers
+  providers: [AuthService, JwtStrategy],
+  exports: [JwtModule],
 })
-export class AuthModule { }
+export class AuthModule {}

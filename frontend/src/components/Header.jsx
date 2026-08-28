@@ -1,29 +1,49 @@
-function Header({ user, onLogin, onLogout }) {
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+function Header() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <header className="header">
       <div className="container header-container">
-        <div className="logo">
-          <img src="/logo.png" className="logo-img" />
+        <Link to="/" className="logo">
+          <img src="/logo.png" className="logo-img" alt="DalatAgri logo" />
           DalatAgri
-        </div>
+        </Link>
 
         <nav className="nav">
-          <a href="/">Trang chủ</a>
-          <a href="/farms">Nông trại</a>
-          <a href="/crops">Cây trồng</a>
-          <a href="/logs">Nhật ký</a>
+          <Link to="/">Trang chủ</Link>
+          <Link to="/crops">Cây trồng</Link>
+          <Link to="/dashboard">Nhật ký</Link>
         </nav>
 
-        {onLogin || onLogout ? (
-          <button className="login-btn" onClick={user ? onLogout : onLogin}>
-            {user ? `${user.fullName} · Đăng xuất` : "Đăng nhập"}
-          </button>
-        ) : (
-          <div className="header-auth">
-            <a className="login-btn" href="/login">Đăng nhập</a>
-            <a className="register-btn" href="/register">Đăng ký</a>
-          </div>
-        )}
+        <div className="header-auth">
+          {user ? (
+            <>
+              <Link to="/account" className="user-menu-btn" title="Tài khoản của tôi">
+                <span className="user-avatar-hdr">
+                  {user.fullName?.charAt(0)?.toUpperCase()}
+                </span>
+                <span className="user-name-hdr">{user.fullName}</span>
+              </Link>
+              <button className="logout-btn-hdr" onClick={handleLogout}>
+                Đăng xuất
+              </button>
+            </>
+          ) : (
+            <>
+              <Link className="login-btn" to="/login">Đăng nhập</Link>
+              <Link className="register-btn" to="/register">Đăng ký</Link>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -24,6 +24,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import AccountPage from "./pages/AccountPage";
 
 function DashboardPage() {
   const supplies = [
@@ -198,14 +199,7 @@ function DashboardPage() {
 
   return (
     <div className="app">
-      <Header
-        user={user}
-        onLogin={() => {
-          setAuthError("");
-          setAuthMode("login");
-        }}
-        onLogout={logout}
-      />
+      <Header />
 
       {authMode && (
         <div className="auth-backdrop" onClick={() => setAuthMode(null)}>
@@ -609,6 +603,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/crops" element={<CropsPage />} />
+          <Route path="/account" element={<AccountPage />} />
           <Route
             path="/dashboard"
             element={

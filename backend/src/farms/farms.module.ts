@@ -4,8 +4,9 @@ import { FarmsController } from './farms.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-    imports: [PrismaModule], // Nhớ import cái này để gọi được DB
-    controllers: [FarmsController],
-    providers: [FarmsService],
+  imports: [PrismaModule],
+  controllers: [FarmsController],
+  providers: [FarmsService],
+  exports: [FarmsService],
 })
-export class FarmsModule { }
+export class FarmsModule {}
