@@ -1,5 +1,5 @@
-<<<<<<< HEAD
 import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -19,19 +19,13 @@ import {
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CatalogPanel from "./components/CatalogPanel";
-=======
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './App.css';
-import { AuthProvider } from './context/AuthContext';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ProtectedRoute from './components/ProtectedRoute';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import HomePage from './pages/HomePage';
->>>>>>> origin/main
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
-function App() {
+function DashboardPage() {
   const supplies = [
     { name: "Phân hữu cơ", price: 12000 },
     { name: "NPK 16-16-8", price: 18500 },
@@ -203,7 +197,6 @@ function App() {
   };
 
   return (
-<<<<<<< HEAD
     <div className="app">
       <Header
         user={user}
@@ -572,25 +565,37 @@ function App() {
 
       <Footer />
     </div>
-=======
+  );
+}
+
+function App() {
+  return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          <Route
+            path="/"
+            element={
+              <div className="app">
+                <Header />
+                <HomePage />
+                <Footer />
+              </div>
+            }
+          />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={
-            <div className="app">
-              <Header />
-              <main className="main">
-                <HomePage />
-              </main>
-              <Footer />
-            </div>
-          } />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
->>>>>>> origin/main
   );
 }
 
