@@ -10,12 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@nestjs/jwt": "^12.0.1",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "recharts": "^3.10.1"
-=======
     "axios": "^1.20.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
