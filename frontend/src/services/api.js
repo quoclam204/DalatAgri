@@ -25,6 +25,18 @@ export const apiLogin = async (data) => {
     return response.data;
 };
 
+/** Quên mật khẩu */
+export const apiForgotPassword = async (email) => {
+    const response = await api.post('/auth/forgot-password', { email });
+    return response.data;
+};
+
+/** Đặt lại mật khẩu */
+export const apiResetPassword = async (token, newPassword) => {
+    const response = await api.post('/auth/reset-password', { token, newPassword });
+    return response.data;
+};
+
 // ── Users APIs ─────────────────────────────────────────────────
 
 /** Lấy thông tin cá nhân (đang đăng nhập) */

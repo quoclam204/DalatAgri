@@ -219,4 +219,39 @@ export class UsersService {
     const derivedKey = (await scrypt(password, salt, 64)) as Buffer;
     return storedKey.length === derivedKey.length && timingSafeEqual(storedKey, derivedKey);
   }
+
+  // ────────────────────────────────────────────────
+  //  Quên mật khẩu / Đặt lại mật khẩu
+  // ────────────────────────────────────────────────
+
+  async saveResetToken(userId: string, token: string, expires: Date) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        resetPasswordToken: token,
+        resetPasswordExpires: expires,
+      },
+    });
+  }
+
+  async findByResetToken(token: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: { gt: new Date() },
+        deletedAt: null,
+      },
+    });
+  }
+
+  async resetPassword(userId: string, newPasswordHash: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        passwordHash: newPasswordHash,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      },
+    });
+  }
 }

@@ -32,6 +32,9 @@ model User {
 
   farms                Farm[]
   refreshTokens        RefreshToken[]
+  
+  resetPasswordToken   String?   @unique
+  resetPasswordExpires DateTime?
 }
 
 model RefreshToken {

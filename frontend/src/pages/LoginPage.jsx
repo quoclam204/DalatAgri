@@ -35,7 +35,6 @@ function LoginPage() {
             <div className="auth-branding">
                 <div className="auth-branding-content">
                     <div className="auth-logo">
-                        <span className="auth-logo-icon">🌿</span>
                         <span className="auth-logo-text">DalatAgri</span>
                     </div>
                     <h1 className="auth-tagline">Quản lý nông hộ<br />thông minh hơn.</h1>
@@ -45,15 +44,12 @@ function LoginPage() {
                     </p>
                     <div className="auth-features">
                         <div className="auth-feature-item">
-                            <span className="feature-icon">📊</span>
                             <span>Báo cáo chi phí tức thì</span>
                         </div>
                         <div className="auth-feature-item">
-                            <span className="feature-icon">🔄</span>
                             <span>Đồng bộ offline-first</span>
                         </div>
                         <div className="auth-feature-item">
-                            <span className="feature-icon">🌱</span>
                             <span>Quản lý nhiều nông hộ</span>
                         </div>
                     </div>
@@ -69,7 +65,7 @@ function LoginPage() {
             <div className="auth-form-panel">
                 <div className="auth-form-wrapper">
                     <div className="auth-form-header">
-                        <h2>Chào mừng trở lại 👋</h2>
+                        <h2>Chào mừng trở lại!</h2>
                         <p>Đăng nhập để tiếp tục quản lý nông trại của bạn</p>
                     </div>
 
@@ -77,7 +73,6 @@ function LoginPage() {
                         <div className="form-group">
                             <label htmlFor="login-email">Địa chỉ Email</label>
                             <div className="input-wrapper">
-                                <span className="input-icon">✉️</span>
                                 <input
                                     id="login-email"
                                     type="email"
@@ -92,9 +87,11 @@ function LoginPage() {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="login-password">Mật khẩu</label>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <label htmlFor="login-password">Mật khẩu</label>
+                                <Link to="/forgot-password" style={{ fontSize: '0.85rem', color: '#16a34a', textDecoration: 'none', fontWeight: 600 }}>Quên mật khẩu?</Link>
+                            </div>
                             <div className="input-wrapper">
-                                <span className="input-icon">🔒</span>
                                 <input
                                     id="login-password"
                                     type={showPassword ? 'text' : 'password'}
@@ -118,7 +115,7 @@ function LoginPage() {
 
                         {error && (
                             <div className="auth-error" role="alert">
-                                <span>⚠️</span> {error}
+                                {error}
                             </div>
                         )}
 
@@ -131,7 +128,7 @@ function LoginPage() {
                             {loading ? (
                                 <><span className="spinner" />  Đang đăng nhập...</>
                             ) : (
-                                'Đăng nhập →'
+                                'Đăng nhập'
                             )}
                         </button>
                     </form>

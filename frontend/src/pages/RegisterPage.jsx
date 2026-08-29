@@ -54,7 +54,6 @@ function RegisterPage() {
             <div className="auth-branding">
                 <div className="auth-branding-content">
                     <div className="auth-logo">
-                        <span className="auth-logo-icon">🌿</span>
                         <span className="auth-logo-text">DalatAgri</span>
                     </div>
                     <h1 className="auth-tagline">Bắt đầu hành trình<br />canh tác số hóa.</h1>
@@ -64,15 +63,12 @@ function RegisterPage() {
                     </p>
                     <div className="auth-features">
                         <div className="auth-feature-item">
-                            <span className="feature-icon">🆓</span>
                             <span>Miễn phí hoàn toàn</span>
                         </div>
                         <div className="auth-feature-item">
-                            <span className="feature-icon">🔐</span>
                             <span>Dữ liệu bảo mật tuyệt đối</span>
                         </div>
                         <div className="auth-feature-item">
-                            <span className="feature-icon">📱</span>
                             <span>Hoạt động trên mọi thiết bị</span>
                         </div>
                     </div>
@@ -88,7 +84,7 @@ function RegisterPage() {
             <div className="auth-form-panel">
                 <div className="auth-form-wrapper">
                     <div className="auth-form-header">
-                        <h2>Tạo tài khoản mới 🌱</h2>
+                        <h2>Tạo tài khoản mới</h2>
                         <p>Chỉ cần vài giây để bắt đầu quản lý nông trại</p>
                     </div>
 
@@ -96,13 +92,12 @@ function RegisterPage() {
                         <div className="form-group">
                             <label htmlFor="register-fullname">Họ và tên</label>
                             <div className="input-wrapper">
-                                <span className="input-icon">👤</span>
                                 <input
                                     id="register-fullname"
                                     type="text"
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
-                                    placeholder="Nguyễn Văn A"
+                                    placeholder=""
                                     required
                                     autoComplete="name"
                                     className="auth-input"
@@ -113,13 +108,11 @@ function RegisterPage() {
                         <div className="form-group">
                             <label htmlFor="register-email">Địa chỉ Email</label>
                             <div className="input-wrapper">
-                                <span className="input-icon">✉️</span>
                                 <input
                                     id="register-email"
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="example@email.com"
                                     required
                                     autoComplete="email"
                                     className="auth-input"
@@ -130,7 +123,6 @@ function RegisterPage() {
                         <div className="form-group">
                             <label htmlFor="register-password">Mật khẩu</label>
                             <div className="input-wrapper">
-                                <span className="input-icon">🔒</span>
                                 <input
                                     id="register-password"
                                     type={showPassword ? 'text' : 'password'}
@@ -167,7 +159,6 @@ function RegisterPage() {
                         <div className="form-group">
                             <label htmlFor="register-confirm">Xác nhận mật khẩu</label>
                             <div className="input-wrapper">
-                                <span className="input-icon">🔐</span>
                                 <input
                                     id="register-confirm"
                                     type={showPassword ? 'text' : 'password'}
@@ -179,8 +170,8 @@ function RegisterPage() {
                                     className={`auth-input ${confirmPassword && password !== confirmPassword ? 'input-error' : ''}`}
                                 />
                                 {confirmPassword && (
-                                    <span className="input-status">
-                                        {password === confirmPassword ? '✅' : '❌'}
+                                    <span className={`input-status ${password === confirmPassword ? 'status-valid' : 'status-invalid'}`}>
+                                        {password === confirmPassword ? 'Hợp lệ' : 'Không khớp'}
                                     </span>
                                 )}
                             </div>
@@ -188,7 +179,7 @@ function RegisterPage() {
 
                         {error && (
                             <div className="auth-error" role="alert">
-                                <span>⚠️</span> {error}
+                                {error}
                             </div>
                         )}
 
@@ -201,7 +192,7 @@ function RegisterPage() {
                             {loading ? (
                                 <><span className="spinner" />  Đang tạo tài khoản...</>
                             ) : (
-                                'Tạo tài khoản →'
+                                'Tạo tài khoản'
                             )}
                         </button>
                     </form>

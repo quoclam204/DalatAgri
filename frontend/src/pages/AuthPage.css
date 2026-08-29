@@ -200,7 +200,7 @@
 
 .auth-input {
   width: 100%;
-  padding: 0.825rem 0.875rem 0.825rem 2.75rem;
+  padding: 0.825rem 0.875rem;
   border: 1.5px solid #e5e7eb;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -210,6 +210,10 @@
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   outline: none;
   box-sizing: border-box;
+}
+
+.input-icon + .auth-input {
+  padding-left: 2.75rem;
 }
 
 .auth-input::placeholder {
@@ -244,10 +248,35 @@
   color: #16a34a;
 }
 
+.password-toggle.text-toggle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.password-toggle.text-toggle:hover {
+  color: #15803d;
+}
+
+.input-wrapper:has(.password-toggle.text-toggle) .auth-input,
+.input-wrapper:has(.input-status) .auth-input {
+  padding-right: 3.5rem;
+}
+
 .input-status {
   position: absolute;
   right: 0.875rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.input-status.status-valid {
+  color: #16a34a;
+}
+
+.input-status.status-invalid {
+  color: #ef4444;
 }
 
 /* ── Password strength ─────────────────────── */
