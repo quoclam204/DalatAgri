@@ -175,7 +175,8 @@ function DashboardPage() {
         : { email: authForm.email, password: authForm.password };
 
     try {
-      const response = await fetch(`http://localhost:3000/users${endpoint}`, {
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const response = await fetch(`${baseUrl}/users${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
