@@ -51,7 +51,7 @@ export class MailService {
       await this.transporter.sendMail(mailOptions);
     } catch (error) {
       console.error('Lỗi khi gửi email:', error);
-      throw new InternalServerErrorException('Hệ thống chưa được cấu hình Email. Vui lòng thiết lập cấu hình EMAIL_USER và EMAIL_PASS trong file .env');
+      throw new InternalServerErrorException('Không thể gửi email. Có thể do sai cấu hình EMAIL_USER/EMAIL_PASS hoặc lỗi mạng. Vui lòng kiểm tra server log.');
     }
   }
 }
