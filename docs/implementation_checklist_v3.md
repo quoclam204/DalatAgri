@@ -54,13 +54,13 @@
 
 | # | Task | Phase | Status | Assignee | Notes |
 |---|------|-------|--------|----------|-------|
-| 21 | BE: CRUD Plot API | 5 | ⏳ | — | |
+| 21 | BE: CRUD Plot API | 5 | ✅ | AI | Hoàn thành |
 | 22 | BE: CRUD CropCycle API | 7 | ⏳ | — | |
 | 23 | BE: CropCycle status workflow | 7 | ⏳ | — | |
 | 24 | BE: Validate overlap | 7 | ⏳ | — | |
-| 25 | FE: FarmsPage (cards) | 5 | ⏳ | — | |
-| 26 | FE: FarmForm (modal) | 5 | ⏳ | — | |
-| 27 | FE: FarmDetailPage (plots) | 5 | ⏳ | — | |
+| 25 | FE: FarmsPage (cards) | 5 | ✅ | AI | Hoàn thành |
+| 26 | FE: FarmForm (modal) | 5 | ✅ | AI | Tích hợp trong FarmsPage |
+| 27 | FE: FarmDetailPage (plots) | 5 | ✅ | AI | Hoàn thành |
 | 28 | FE: CropCyclePage | 7 | ⏳ | — | |
 | 29 | FE: CropCycleForm | 7 | ⏳ | — | |
 | 30 | FE: GrowthCycleForm (stages) | 6 | ⏳ | — | |

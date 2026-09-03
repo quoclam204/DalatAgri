@@ -112,3 +112,30 @@ export const apiGetAllFarms = async () => {
     const response = await api.get('/farms/all');
     return response.data;
 };
+
+// ── Plots APIs ─────────────────────────────────────────────────
+
+/** Lấy danh sách lô trồng */
+export const apiGetPlots = async (farmId) => {
+    const response = await api.get(`/farms/${farmId}/plots`);
+    return response.data;
+};
+
+/** Tạo lô trồng mới */
+export const apiCreatePlot = async (farmId, data) => {
+    const response = await api.post(`/farms/${farmId}/plots`, data);
+    return response.data;
+};
+
+/** Cập nhật lô trồng */
+export const apiUpdatePlot = async (farmId, plotId, data) => {
+    const response = await api.patch(`/farms/${farmId}/plots/${plotId}`, data);
+    return response.data;
+};
+
+/** Xóa lô trồng */
+export const apiDeletePlot = async (farmId, plotId) => {
+    const response = await api.delete(`/farms/${farmId}/plots/${plotId}`);
+    return response.data;
+};
+
