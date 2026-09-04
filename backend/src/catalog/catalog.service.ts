@@ -231,7 +231,7 @@ export class CatalogService {
       data: {
         plotId: input.plotId,
         cropId: input.cropId,
-        growthCycleId: input.growthCycleId,
+        growthCycleId: input.growthCycleId || null,
         name: this.text(input.name, 'name'),
         startDate: dates.start,
         expectedEndDate: dates.end,
