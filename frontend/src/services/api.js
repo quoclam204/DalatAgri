@@ -169,3 +169,11 @@ export const apiGetSeasons = async () => {
   const response = await api.get("/catalog/seasons");
   return response.data;
 };
+
+/** Nhật ký canh tác của workspace */
+export const apiGetJournalOptions = async (farmId) =>
+  (await api.get('/journal/options', { params: farmId ? { farmId } : {} })).data;
+export const apiCreateJournal = async (data) =>
+  (await api.post('/journal', data)).data;
+export const apiGetJournalHistory = async (params) =>
+  (await api.get('/journal', { params })).data;

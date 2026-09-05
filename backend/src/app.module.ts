@@ -7,6 +7,7 @@ import { CatalogModule } from './catalog/catalog.module';
 import { AuthModule } from './auth/auth.module';
 import { FarmsModule } from './farms/farms.module';
 import { ActivityLogsModule } from './activity-logs/activity-logs.module';
+import { JournalModule } from './journal/journal.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -22,6 +23,7 @@ import { APP_GUARD } from '@nestjs/core';
     AuthModule,
     FarmsModule,
     ActivityLogsModule,
+    JournalModule,
   ],
   controllers: [AppController],
   providers: [

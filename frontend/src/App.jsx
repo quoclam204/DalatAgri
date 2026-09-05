@@ -30,6 +30,7 @@ import AccountPage from "./pages/AccountPage";
 import FarmsPage from "./pages/FarmsPage";
 import FarmDetailPage from "./pages/FarmDetailPage";
 import ActivityLogsPage from "./pages/ActivityLogsPage";
+import WorkspacePage from "./pages/WorkspacePage";
 
 function DashboardPage() {
   const supplies = [
@@ -640,6 +641,12 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/journal" element={<ProtectedRoute><WorkspacePage view="journal" /></ProtectedRoute>} />
+          <Route path="/inventory" element={<ProtectedRoute><WorkspacePage view="inventory" /></ProtectedRoute>} />
+          <Route path="/finance" element={<ProtectedRoute><WorkspacePage view="finance" /></ProtectedRoute>} />
+          <Route path="/revenue" element={<ProtectedRoute><WorkspacePage view="revenue" /></ProtectedRoute>} />
+          <Route path="/ocr" element={<ProtectedRoute><WorkspacePage view="ocr" /></ProtectedRoute>} />
+          <Route path="/help" element={<ProtectedRoute><WorkspacePage view="help" /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
