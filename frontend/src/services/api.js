@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // ── Axios instance với interceptor tự động gắn token ──────────
 export const api = axios.create({ baseURL: BASE_URL });
@@ -138,4 +137,9 @@ export const apiDeletePlot = async (farmId, plotId) => {
     const response = await api.delete(`/farms/${farmId}/plots/${plotId}`);
     return response.data;
 };
+
+/** Nhật ký canh tác */
+export const apiGetJournalOptions = async (farmId) => (await api.get('/journal/options', { params: farmId ? { farmId } : {} })).data;
+export const apiCreateJournal = async (data) => (await api.post('/journal', data)).data;
+export const apiGetJournalHistory = async (params) => (await api.get('/journal', { params })).data;
 

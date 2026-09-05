@@ -182,6 +182,7 @@ model ActivityLog {
   activityType    String    // VD: LAM_DAT, TUOI, BON_PHAN, PHUN_THUOC, THU_HOACH...
   activityDate    DateTime
   notes           String?
+  photos          String[]  @default([])
   syncStatus      String    // VD: PENDING, SYNCED, CONFLICT
 
   // Dành cho loại hình công việc có tính phí (nhân công / thuê máy móc)
