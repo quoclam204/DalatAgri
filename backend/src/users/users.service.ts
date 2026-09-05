@@ -79,6 +79,57 @@ export class UsersService {
     });
   }
 
+  /** Tạo mới hoặc liên kết tài khoản đăng nhập bằng Google */
+  async upsertGoogleUser(profile: { googleId: string; email: string; fullName: string }) {
+    const email = profile.email.trim().toLowerCase();
+    const existingByGoogleId = await this.prisma.user.findFirst({
+      where: { googleId: profile.googleId, deletedAt: null },
+    });
+
+    if (existingByGoogleId) {
+      if (!existingByGoogleId.isActive) {
+        throw new UnauthorizedException('Tài khoản đã bị vô hiệu hóa');
+      }
+
+      return this.prisma.user.update({
+        where: { id: existingByGoogleId.id },
+        data: { emailVerified: true, failedLoginAttempts: 0, lastLoginAt: new Date() },
+      });
+    }
+
+    const existingByEmail = await this.prisma.user.findFirst({
+      where: { email, deletedAt: null },
+    });
+
+    if (existingByEmail) {
+      if (!existingByEmail.isActive) {
+        throw new UnauthorizedException('Tài khoản đã bị vô hiệu hóa');
+      }
+
+      return this.prisma.user.update({
+        where: { id: existingByEmail.id },
+        data: {
+          googleId: profile.googleId,
+          emailVerified: true,
+          failedLoginAttempts: 0,
+          lastLoginAt: new Date(),
+        },
+      });
+    }
+
+    return this.prisma.user.create({
+      data: {
+        email,
+        googleId: profile.googleId,
+        passwordHash: await this.hashPassword(randomBytes(32).toString('hex')),
+        fullName: profile.fullName.trim() || email.split('@')[0],
+        role: UserRole.OWNER,
+        emailVerified: true,
+        lastLoginAt: new Date(),
+      },
+    });
+  }
+
   /** Tạo người dùng từ RegisterDto (dùng bởi AuthService) */
   async create(dto: RegisterDto) {
     const email = dto.email.trim().toLowerCase();

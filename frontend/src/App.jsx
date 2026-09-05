@@ -29,6 +29,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AccountPage from "./pages/AccountPage";
 import FarmsPage from "./pages/FarmsPage";
 import FarmDetailPage from "./pages/FarmDetailPage";
+import ActivityLogsPage from "./pages/ActivityLogsPage";
 
 function DashboardPage() {
   const supplies = [
@@ -611,8 +612,26 @@ function App() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/crops" element={<CropsPage />} />
           <Route path="/account" element={<AccountPage />} />
-          <Route path="/farms" element={<ProtectedRoute><FarmsPage /></ProtectedRoute>} />
-          <Route path="/farms/:id" element={<ProtectedRoute><FarmDetailPage /></ProtectedRoute>} />
+          <Route
+            path="/farms"
+            element={
+              <ProtectedRoute>
+                <FarmsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/farms/:id"
+            element={
+              <ProtectedRoute>
+                <FarmDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/activity-logs"
+            element={<ActivityLogsPage />}
+          />
           <Route
             path="/dashboard"
             element={

@@ -1,304 +1,37 @@
-import '../styles/HomePage.css'
+import { Link } from 'react-router-dom';
+import '../styles/HomePage.css';
 
-const features = [
-  {
-    icon: '📋',
-    title: 'Nhật ký canh tác',
-    desc: 'Ghi chép chi tiết mọi hoạt động canh tác theo từng vụ mùa. Theo dõi tiến độ cây trồng từ khi gieo hạt đến thu hoạch.',
-    color: '#1e804d',
-    bg: 'rgba(30, 128, 77, 0.08)',
-  },
-  {
-    icon: '🌿',
-    title: 'Quản lý vật tư',
-    desc: 'Kiểm soát tồn kho phân bón, thuốc bảo vệ thực vật và giống cây. Cảnh báo khi vật tư sắp cạn.',
-    color: '#0ea5e9',
-    bg: 'rgba(14, 165, 233, 0.08)',
-  },
-  {
-    icon: '💰',
-    title: 'Chi phí & Lợi nhuận',
-    desc: 'Tính toán chi phí đầu tư và lợi nhuận theo từng vụ. Biết ngay hiệu quả kinh tế của từng loại cây trồng.',
-    color: '#f59e0b',
-    bg: 'rgba(245, 158, 11, 0.08)',
-  },
-  {
-    icon: '📊',
-    title: 'Báo cáo & Thống kê',
-    desc: 'Biểu đồ trực quan theo tháng, quý, năm. Phân tích xu hướng để đưa ra quyết định canh tác tốt hơn.',
-    color: '#8b5cf6',
-    bg: 'rgba(139, 92, 246, 0.08)',
-  },
-  {
-    icon: '📡',
-    title: 'Offline-First',
-    desc: 'Hoạt động ngay cả khi mất kết nối internet. Dữ liệu tự động đồng bộ khi có mạng trở lại.',
-    color: '#ef4444',
-    bg: 'rgba(239, 68, 68, 0.08)',
-  },
-  {
-    icon: '🔒',
-    title: 'Bảo mật dữ liệu',
-    desc: 'Dữ liệu được mã hóa và bảo vệ an toàn. Chỉ bạn mới có quyền truy cập thông tin nông trại của mình.',
-    color: '#10b981',
-    bg: 'rgba(16, 185, 129, 0.08)',
-  },
-]
+const painPoints = [
+  ['01', 'Sổ tay dễ thất lạc', 'Mưa ướt, trang rách, tìm lại một khoản chi của vụ trước cũng thành việc khó.'],
+  ['02', 'Không rõ vườn nào đang lời', 'Cà phê, sầu riêng, mắc ca thường trồng xen. Gộp chung số liệu khiến quyết định bị mù.'],
+  ['03', 'Kế toán riêng quá tốn kém', 'Chủ vườn cần một cách ghi chép đơn giản, đủ chắc để tự kiểm tra mỗi tuần.'],
+  ['04', 'Hóa đơn cũ không tra được', 'Chi phí nằm trong túi giấy, đến cuối vụ không còn nhớ đã mua gì và cho lô nào.'],
+];
 
-const steps = [
-  {
-    step: '01',
-    title: 'Tạo tài khoản',
-    desc: 'Đăng ký miễn phí trong vòng 1 phút. Không cần kỹ năng công nghệ.',
-  },
-  {
-    step: '02',
-    title: 'Thêm nông trại',
-    desc: 'Nhập thông tin vườn, loại cây trồng và diện tích canh tác của bạn.',
-  },
-  {
-    step: '03',
-    title: 'Ghi nhật ký',
-    desc: 'Ghi chép hàng ngày về hoạt động, vật tư sử dụng và chi phí phát sinh.',
-  },
-  {
-    step: '04',
-    title: 'Xem báo cáo',
-    desc: 'Phân tích dữ liệu, theo dõi lợi nhuận và tối ưu hóa quy trình canh tác.',
-  },
-]
+const featureData = [
+  { number: '01', title: 'Nhật ký canh tác', copy: 'Ghi việc đã làm theo từng lô cây, ngay ngoài vườn. Có ngày, người thực hiện và ghi chú để cả nhà cùng hiểu.', kind: 'journal' },
+  { number: '02', title: 'Vật tư & chi phí', copy: 'Biết tiền đang đi vào đâu: phân, thuốc, nhân công hay một khoản phát sinh nhỏ nhưng lặp lại mỗi tuần.', kind: 'costs' },
+  { number: '03', title: 'Báo cáo lợi nhuận', copy: 'Tách riêng cà phê và sầu riêng trong cùng một vườn, để biết cây nào đang nuôi cây nào.', kind: 'profit' },
+  { number: '04', title: 'Số hóa hóa đơn', copy: 'Chụp hóa đơn bằng camera, lưu cùng khoản chi. Không còn túi giấy cần lục vào cuối vụ.', kind: 'receipt' },
+];
 
-const stats = [
-  { value: '500+', label: 'Nông hộ sử dụng' },
-  { value: '10,000+', label: 'Nhật ký được ghi' },
-  { value: '98%', label: 'Hài lòng với dịch vụ' },
-  { value: '24/7', label: 'Hỗ trợ người dùng' },
-]
-
-function HomePage() {
-  return (
-    <div className="home-page">
-      {/* ── HERO ── */}
-      <section className="hero-section">
-        <div className="hero-bg-shapes">
-          <div className="shape shape-1" />
-          <div className="shape shape-2" />
-          <div className="shape shape-3" />
-        </div>
-
-        <div className="container hero-content">
-          <div className="hero-badge">
-            <span className="badge-dot" />
-            Nền tảng nông nghiệp số cho Đà Lạt
-          </div>
-
-          <h1 className="hero-title">
-            Quản lý nông trại
-            <br />
-            <span className="hero-title-highlight">thông minh & hiệu quả</span>
-          </h1>
-
-          <p className="hero-desc">
-            DalatAgri giúp nông hộ số hóa toàn bộ nhật ký canh tác, vật tư và
-            chi phí. Từ vườn rau đến vườn cây ăn trái — tất cả trong một ứng
-            dụng duy nhất.
-          </p>
-
-          <div className="hero-actions">
-            <button className="btn-primary" id="hero-cta-start">
-              Bắt đầu miễn phí
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
-            <button className="btn-secondary" id="hero-cta-demo">
-              Xem demo
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
-              </svg>
-            </button>
-          </div>
-
-          <div className="hero-trust">
-            <div className="trust-avatars">
-              {['👨‍🌾', '👩‍🌾', '🧑‍🌾', '👨‍🌾'].map((e, i) => (
-                <span key={i} className="trust-avatar">{e}</span>
-              ))}
-            </div>
-            <p className="trust-text">
-              <strong>500+ nông hộ</strong> tại Đà Lạt đang dùng DalatAgri
-            </p>
-          </div>
-        </div>
-
-        <div className="container hero-dashboard-preview">
-          <div className="dashboard-mockup">
-            <div className="mockup-header">
-              <div className="mockup-dots">
-                <span /><span /><span />
-              </div>
-              <span className="mockup-title">DalatAgri Dashboard</span>
-            </div>
-            <div className="mockup-body">
-              <div className="mockup-sidebar">
-                {['🏠 Tổng quan', '🌿 Nông trại', '📋 Nhật ký', '💊 Vật tư', '💰 Chi phí', '📊 Báo cáo'].map((item, i) => (
-                  <div key={i} className={`sidebar-item ${i === 0 ? 'active' : ''}`}>{item}</div>
-                ))}
-              </div>
-              <div className="mockup-main">
-                <div className="mockup-stats">
-                  {[
-                    { label: 'Vườn đang canh tác', val: '3', icon: '🌱', color: '#1e804d' },
-                    { label: 'Nhật ký tháng này', val: '24', icon: '📝', color: '#0ea5e9' },
-                    { label: 'Chi phí tháng', val: '4.2M', icon: '💸', color: '#f59e0b' },
-                  ].map((s, i) => (
-                    <div key={i} className="stat-card" style={{ '--card-color': s.color }}>
-                      <span className="stat-icon">{s.icon}</span>
-                      <div>
-                        <div className="stat-val">{s.val}</div>
-                        <div className="stat-lbl">{s.label}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mockup-chart">
-                  <div className="chart-title">📈 Chi phí theo tháng</div>
-                  <div className="chart-bars">
-                    {[55, 70, 45, 80, 65, 90, 75].map((h, i) => (
-                      <div key={i} className="chart-bar-wrap">
-                        <div className="chart-bar" style={{ height: `${h}%` }} />
-                        <span className="chart-label">{['T2','T3','T4','T5','T6','T7','T8'][i]}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── STATS ── */}
-      <section className="stats-section">
-        <div className="container stats-grid">
-          {stats.map((s, i) => (
-            <div key={i} className="stats-item" id={`stat-${i}`}>
-              <div className="stats-value">{s.value}</div>
-              <div className="stats-label">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── FEATURES ── */}
-      <section className="features-section" id="features">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-tag">Tính năng</span>
-            <h2 className="section-title">Mọi thứ bạn cần để<br />quản lý nông trại hiệu quả</h2>
-            <p className="section-desc">
-              Từ ghi chép nhật ký đến phân tích báo cáo — DalatAgri cung cấp
-              đầy đủ công cụ để giúp bạn canh tác thông minh hơn.
-            </p>
-          </div>
-
-          <div className="features-grid">
-            {features.map((f, i) => (
-              <div key={i} className="feature-card" id={`feature-${i}`}
-                style={{ '--feature-color': f.color, '--feature-bg': f.bg }}>
-                <div className="feature-icon-wrap">
-                  <span className="feature-icon">{f.icon}</span>
-                </div>
-                <h3 className="feature-title">{f.title}</h3>
-                <p className="feature-desc">{f.desc}</p>
-                <div className="feature-arrow">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" strokeWidth="2.5">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section className="how-section" id="how-it-works">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-tag">Hướng dẫn</span>
-            <h2 className="section-title">Bắt đầu chỉ trong<br />4 bước đơn giản</h2>
-            <p className="section-desc">
-              Không cần kiến thức công nghệ. Giao diện đơn giản, dễ dùng cho
-              mọi nông dân.
-            </p>
-          </div>
-
-          <div className="steps-grid">
-            {steps.map((s, i) => (
-              <div key={i} className="step-card" id={`step-${i}`}>
-                <div className="step-number">{s.step}</div>
-                {i < steps.length - 1 && <div className="step-connector" />}
-                <h3 className="step-title">{s.title}</h3>
-                <p className="step-desc">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIAL ── */}
-      <section className="testimonial-section">
-        <div className="container">
-          <div className="testimonial-card">
-            <div className="testimonial-quote">"</div>
-            <p className="testimonial-text">
-              Trước đây tôi phải ghi chép bằng sổ tay, rất dễ mất và khó tra
-              cứu. Từ khi dùng DalatAgri, tôi theo dõi được toàn bộ chi phí
-              và lợi nhuận của vườn cà phê một cách rõ ràng. Năm ngoái tôi đã
-              tiết kiệm được gần 20% chi phí vật tư!
-            </p>
-            <div className="testimonial-author">
-              <span className="author-avatar">👨‍🌾</span>
-              <div>
-                <div className="author-name">Nguyễn Văn Minh</div>
-                <div className="author-role">Nông dân tại Lâm Đồng • Vườn cà phê 5ha</div>
-              </div>
-              <div className="testimonial-stars">⭐⭐⭐⭐⭐</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="cta-section">
-        <div className="cta-bg-shapes">
-          <div className="cta-shape-1" />
-          <div className="cta-shape-2" />
-        </div>
-        <div className="container cta-content">
-          <h2 className="cta-title">Sẵn sàng số hóa<br />nông trại của bạn?</h2>
-          <p className="cta-desc">
-            Tham gia cùng hàng trăm nông hộ Đà Lạt đang quản lý nông trại
-            thông minh hơn với DalatAgri.
-          </p>
-          <div className="cta-actions">
-            <button className="btn-white" id="cta-register">
-              Đăng ký miễn phí ngay
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
-            <button className="btn-outline-white" id="cta-login">
-              Đã có tài khoản? Đăng nhập
-            </button>
-          </div>
-        </div>
-      </section>
-    </div>
-  )
+function PhoneScreen({ kind }) {
+  if (kind === 'journal') return <div className="phone-screen journal-screen"><div className="screen-top"><span>09:41</span><span>● ● ●</span></div><p className="screen-kicker">NHẬT KÝ HÔM NAY</p><h4>Bón phân lần 2</h4><p className="screen-muted">Lô Sầu riêng 02 · 05/09/2026</p><div className="screen-row"><span className="screen-icon">↗</span><div><b>Phân hữu cơ</b><small>120 kg · Đã hoàn tất</small></div></div><div className="screen-note">Mưa nhẹ sau khi bón, cây hấp thụ tốt.</div><div className="screen-button">Lưu nhật ký</div></div>;
+  if (kind === 'costs') return <div className="phone-screen costs-screen"><div className="screen-top"><span>Kho vật tư</span><span className="screen-plus">+</span></div><div className="cost-total"><small>CHI PHÍ THÁNG 9</small><strong>18.420.000 đ</strong></div><div className="cost-line"><span>Phân bón <i>62%</i></span><b>11,4 tr</b></div><div className="meter"><span style={{ width: '62%' }} /></div><div className="cost-line"><span>Nhân công <i>24%</i></span><b>4,4 tr</b></div><div className="meter amber"><span style={{ width: '24%' }} /></div><div className="cost-line"><span>Khác <i>14%</i></span><b>2,6 tr</b></div><div className="meter brown"><span style={{ width: '14%' }} /></div></div>;
+  if (kind === 'profit') return <div className="phone-screen profit-screen"><div className="screen-top"><span>Lợi nhuận vụ này</span><span>⌁</span></div><p className="screen-muted">Vườn Đồi Gió · 2 ha</p><div className="profit-total"><small>TẠM TÍNH</small><strong>+86,4 tr</strong><span>↑ 12,8% so với vụ trước</span></div><div className="profit-bars"><div><span style={{ height: '70%' }} /><small>Cà phê</small></div><div><span className="bar-dark" style={{ height: '92%' }} /><small>Sầu riêng</small></div><div><span style={{ height: '48%' }} /><small>Mắc ca</small></div></div></div>;
+  return <div className="phone-screen receipt-screen"><div className="screen-top"><span>Hóa đơn mới</span><span>⋮</span></div><div className="receipt-photo"><span>HÓA ĐƠN VẬT TƯ</span><b>05 · 09 · 2026</b><strong>1.280.000 đ</strong></div><div className="receipt-field"><small>Đơn vị bán</small><b>Vật tư Nông Lâm</b></div><div className="receipt-field"><small>Đã gắn vào</small><b>Vườn Đồi Gió · Cà phê</b></div><div className="screen-button dark-button">Xác nhận khoản chi</div></div>;
 }
 
-export default HomePage
+function HomePage() {
+  return <div className="farm-landing">
+    <section className="landing-hero"><div className="hero-grain" /><div className="container landing-hero-inner"><div className="hero-copy"><p className="landing-eyebrow"><span /> HỆ THỐNG QUẢN LÝ CHO VƯỜN CÂY DÀI NGÀY</p><h1>Sổ vườn rõ ràng.<br /><em>Lời lỗ có căn cứ.</em></h1><p className="hero-lead">Farm-Farmer giúp chủ vườn ghi lại từng việc đã làm, từng khoản đã chi và nhìn thấy hiệu quả thật của cà phê, sầu riêng, mắc ca trong cùng một nơi.</p><div className="landing-actions"><Link className="landing-primary" to="/register">Dùng thử miễn phí <span>↗</span></Link><a className="landing-secondary" href="#demo">Xem cách hoạt động <span>↓</span></a></div><p className="hero-note">Không cần kế toán riêng · Bắt đầu với vườn đầu tiên của bạn</p></div><div className="hero-visual" aria-label="Bản xem trước báo cáo vườn Đồi Gió"><div className="field-label">VƯỜN ĐỒI GIÓ <span>● ĐANG THEO DÕI</span></div><div className="profit-board"><div className="board-head"><div><small>LỢI NHUẬN TẠM TÍNH · VỤ 2026</small><strong>+86.420.000 <i>đ</i></strong></div><span className="board-mark">FF</span></div><div className="board-chart"><div className="chart-y"><span>100tr</span><span>50tr</span><span>0</span></div><div className="chart-area"><div className="chart-line" /><div className="chart-point p1" /><div className="chart-point p2" /><div className="chart-point p3" /><div className="chart-point p4" /><div className="chart-months"><span>T5</span><span>T6</span><span>T7</span><span>T8</span><span>T9</span></div></div></div><div className="board-footer"><div><span className="legend-dot coffee" /> Cà phê <b>+42,8 tr</b></div><div><span className="legend-dot durian" /> Sầu riêng <b>+43,6 tr</b></div></div></div><div className="hero-float"><span>HÔM NAY</span><b>3 việc đã ghi</b><small>Vườn không còn là con số chung</small></div></div></div></section>
+    <section className="proof-strip"><div className="container proof-inner"><p>Cho chủ vườn muốn biết rõ:</p><div><span>●</span> Tiền đang đi đâu</div><div><span>●</span> Cây nào đang sinh lời</div><div><span>●</span> Việc gì đã làm hôm nay</div></div></section>
+    <section className="pain-section"><div className="container"><div className="section-intro"><p className="landing-eyebrow">01 / NỖI ĐAU THẬT</p><h2>Cuối vụ không nên<br /><em>là lúc bắt đầu đoán.</em></h2><p>Nông trại vận hành bằng rất nhiều quyết định nhỏ. Khi chúng nằm rải rác trong sổ, túi giấy và trí nhớ, bức tranh lớn luôn thiếu một mảnh.</p></div><div className="pain-grid">{painPoints.map(([number, title, copy]) => <article className="pain-item" key={number}><span>{number}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></div></section>
+    <section className="feature-section" id="demo"><div className="container"><div className="section-intro feature-intro"><p className="landing-eyebrow">02 / MỘT CÁCH LÀM GỌN HƠN</p><h2>Từ việc ngoài vườn<br /><em>đến quyết định đầu tư.</em></h2><p>Không biến chủ vườn thành nhân viên nhập liệu. Farm-Farmer gom đúng những gì cần biết, ở đúng thời điểm cần biết.</p></div><div className="feature-list">{featureData.map((feature) => <article className={`feature-row feature-${feature.kind}`} key={feature.kind}><div className="feature-copy"><span className="feature-number">{feature.number}</span><h3>{feature.title}</h3><p>{feature.copy}</p><Link to={feature.kind === 'journal' ? '/activity-logs' : '/register'}>Khám phá tính năng <span>↗</span></Link></div><div className="phone-wrap"><div className="phone"><div className="phone-speaker" /><PhoneScreen kind={feature.kind} /></div></div></article>)}</div></div></section>
+    <section className="case-section"><div className="container case-grid"><div className="case-copy"><p className="landing-eyebrow">03 / MỘT VÍ DỤ CỤ THỂ</p><h2>Một vườn.<br /><em>Hai loại cây.<br />Một quyết định sáng hơn.</em></h2><p>Vườn Đồi Gió rộng 2 ha, trồng xen cà phê và sầu riêng. Thay vì nhìn một con số chi phí chung, chủ vườn có thể tách riêng từng loại cây để biết khoản đầu tư nào đang trả lời tốt nhất.</p><Link className="text-link" to="/register">Xem bản demo dữ liệu <span>↗</span></Link></div><div className="case-card"><div className="case-card-top"><span>VƯỜN ĐỒI GIÓ · 2 HA</span><span>VỤ 2026</span></div><div className="case-total"><small>TỔNG DOANH THU DỰ KIẾN</small><strong>246.800.000 đ</strong></div><div className="case-table"><div><span><i className="tree-coffee" /> Cà phê</span><b>+42.800.000 đ</b><small>Chi phí 38,2 tr · 1,4 ha</small></div><div><span><i className="tree-durian" /> Sầu riêng</span><b>+43.620.000 đ</b><small>Chi phí 62,1 tr · 0,6 ha</small></div></div><div className="case-foot">Lợi nhuận = Doanh thu − (Vật tư + Nhân công + Chi phí khác)</div></div></div></section>
+    <section className="final-cta"><div className="container final-cta-inner"><div><p className="landing-eyebrow">BẮT ĐẦU TỪ VỤ NÀY</p><h2>Đừng để sổ tay<br />quyết định thay bạn.</h2></div><div><p>Ghi lại việc đầu tiên trong hôm nay. Miễn phí cho vườn đầu tiên, không cần thẻ thanh toán.</p><Link className="landing-primary light" to="/register">Dùng thử miễn phí <span>↗</span></Link></div></div></section>
+    <footer className="landing-footer"><div className="container footer-grid"><div><div className="footer-brand">Farm<span>·</span>Farmer</div><p>Quản lý canh tác cây dài ngày bằng những dữ liệu bạn có thể tin.</p></div><div><b>HỖ TRỢ</b><a href="mailto:hello@farmfarmer.vn">hello@farmfarmer.vn</a><a href="tel:0900000000">090 000 0000</a></div><div><b>DỮ LIỆU</b><a href="#privacy">Chính sách dữ liệu</a><a href="#security">Bảo mật tài chính</a></div></div><div className="container footer-bottom"><span>© 2026 Farm-Farmer</span><span>Dữ liệu của bạn thuộc về bạn.</span></div></footer>
+  </div>;
+}
+
+export default HomePage;
