@@ -30,6 +30,7 @@ import AccountPage from "./pages/AccountPage";
 import FarmsPage from "./pages/FarmsPage";
 import FarmDetailPage from "./pages/FarmDetailPage";
 import ActivityLogsPage from "./pages/ActivityLogsPage";
+import CropsPage from "./pages/CropsPage";
 import WorkspacePage from "./pages/WorkspacePage";
 
 function DashboardPage() {
@@ -564,29 +565,6 @@ function DashboardPage() {
         </section>
       </main>
 
-      <Footer />
-    </div>
-  );
-}
-
-function CropsPage() {
-  const { user } = useAuth();
-
-  return (
-    <div className="app">
-      <Header />
-      <main className="main container">
-        <section className="page-intro">
-          <div>
-            <p className="eyebrow">DANH MỤC SẢN XUẤT</p>
-            <h1>Quản lý cây trồng</h1>
-            <p className="intro-copy">
-              Thêm, theo dõi và cập nhật các loại cây đang được canh tác.
-            </p>
-          </div>
-        </section>
-        <CatalogPanel user={user} initialTab="crops" />
-      </main>
       <Footer />
     </div>
   );
